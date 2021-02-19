@@ -1,6 +1,6 @@
 const catchAllHandler = (err, req, res, next) => {
   if (!res.headersSent) {
-    res.status(500).send(err);
+    res.status(err.httpStatusCode || 500).send(err.message);
   }
 };
 
