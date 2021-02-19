@@ -50,12 +50,34 @@ passport.use(
         "last_name",
         "gender",
         "link",
-        "profileUrl",
+        "picture",
       ],
     },
     async function (accessToken, refreshToken, profile, done) {
       console.log(profile);
-      done(null, profile);
+      try {
+        const user = await UserModel.findOne({
+          email: profile.emails[0].value,
+        });
+        if (!user) {
+          const newUser = {
+            name: profile.name.givenName,
+            surname: profile.name.familyName,
+            imgUrl: profile.photos[0].value,
+            favourites: [],
+            email: profile.emails[0].value,
+          };
+          const createdUser = new UserModel(newUser);
+          await createdUser.save();
+          const token = await authenticate(createdUser);
+          done(null, { user: createdUser, token });
+        } else {
+          const tokens = await authenticate(user);
+          done(null, { user, tokens });
+        }
+      } catch (error) {
+        done(error);
+      }
     }
   )
 );

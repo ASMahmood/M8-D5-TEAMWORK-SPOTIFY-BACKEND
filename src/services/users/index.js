@@ -54,7 +54,7 @@ usersRouter.get(
   passport.authenticate("spotify"),
   async (req, res, next) => {
     try {
-      res.cookie("token", req.user.token, {
+      res.cookie("token", req.user.tokens.token, {
         httpOnly: true,
       });
       res.status(200).redirect("https://www.youtube.com/watch?v=2ocykBzWDiM");
@@ -70,6 +70,9 @@ usersRouter.get(
   passport.authenticate("facebook"),
   async (req, res, next) => {
     try {
+      res.cookie("token", req.user.tokens.token, {
+        httpOnly: true,
+      });
       res.status(200).redirect("https://www.youtube.com/watch?v=izGwDsrQ1eQ");
     } catch (error) {
       console.log(error);
