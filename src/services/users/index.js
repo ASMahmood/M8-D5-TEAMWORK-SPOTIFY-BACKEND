@@ -25,10 +25,12 @@ usersRouter.post("/login", async (req, res, next) => {
     const user = await UserModel.findByCredentials(email, password);
     console.log(user);
     const token = await authenticate(user);
-    res.cookie("token", token, {
-      httpOnly: true,
-    });
-    res.send({ message: "logged in" });
+    console.log(token.token);
+    res
+      .cookie("token", token.token, {
+        httpOnly: true,
+      })
+      .send({ message: "logged in" });
   } catch (error) {
     console.log(error);
     next(error);
