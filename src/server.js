@@ -1,15 +1,19 @@
 const express = require("express");
+const listEndpoints = require("express-list-endpoints");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const usersRouter = require("./services/users");
 
 const server = express();
 const port = process.env.PORT || 3003;
 
 server.use(cors());
 server.use(express.json());
+server.use("/users", usersRouter);
 
+console.log(listEndpoints(server));
 mongoose
-  .connect(process.env.MONGO_ATLAS, {
+  .connect(process.env.MONGO_CONNECTION, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
