@@ -43,6 +43,13 @@ usersRouter.get(
 );
 
 usersRouter.get(
+  "/3rdparty/facebook",
+  passport.authenticate("facebook", {
+    scope: ["email", "public_profile"],
+  })
+);
+
+usersRouter.get(
   "/3rdparty/spotify/redirect",
   passport.authenticate("spotify"),
   async (req, res, next) => {
@@ -51,6 +58,19 @@ usersRouter.get(
         httpOnly: true,
       });
       res.status(200).redirect("https://www.youtube.com/watch?v=2ocykBzWDiM");
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
+
+usersRouter.get(
+  "/3rdparty/facebook/redirect",
+  passport.authenticate("facebook"),
+  async (req, res, next) => {
+    try {
+      res.status(200).redirect("https://www.youtube.com/watch?v=izGwDsrQ1eQ");
     } catch (error) {
       console.log(error);
       next(error);
