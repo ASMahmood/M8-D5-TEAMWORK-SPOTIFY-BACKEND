@@ -1,26 +1,40 @@
 const express = require("express");
 const listEndpoints = require("express-list-endpoints");
 const cors = require("cors");
+const passport = require("passport");
 const mongoose = require("mongoose");
-const usersRouter = require("./services/users");
-const catchAllHandler = require("./errorHandler");
-const deezerRouter = require("./deezer-crud");
+const cookieParser = require("cookie-parser");
 
+const usersRouter = require("./services/users");
+const deezerRouter = require("./deezer-crud");
+const catchAllHandler = require("./errorHandler");
 
 const server = express();
 const port = process.env.PORT || 3003;
 
-server.use(cors());
-server.use(express.json());
-server.use("/users", usersRouter);
+const whitelist = ["http://localhost:3000"];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
 
+server.use(cors(corsOptions));
+server.use(express.json());
+server.use(passport.initialize());
+server.use(cookieParser());
 
 console.log(listEndpoints(server));
 
+server.use("/users", usersRouter);
 server.use("/deezer", deezerRouter);
 
 server.use(catchAllHandler);
-
 
 mongoose
   .connect(process.env.MONGO_CONNECTION, {
