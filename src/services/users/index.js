@@ -1,5 +1,5 @@
 const express = require("express");
-const { authenticate } = require("../auth/tools");
+const { authenticate, verifyJWT } = require("../auth/tools");
 const { authorize } = require("../auth/middleware");
 const passport = require("passport");
 require("../auth/oauth");
@@ -59,7 +59,7 @@ usersRouter.get(
       res.cookie("token", req.user.tokens.token, {
         httpOnly: true,
       });
-      res.status(200).redirect("https://www.youtube.com/watch?v=2ocykBzWDiM");
+      res.status(200).redirect("http://localhost:3000/");
     } catch (error) {
       console.log(error);
       next(error);
@@ -75,12 +75,24 @@ usersRouter.get(
       res.cookie("token", req.user.tokens.token, {
         httpOnly: true,
       });
-      res.status(200).redirect("https://www.youtube.com/watch?v=izGwDsrQ1eQ");
+      res.status(200).redirect("http://localhost:3000/");
     } catch (error) {
       console.log(error);
       next(error);
     }
   }
 );
+
+usersRouter.get("/homepage/login/help/me", async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    const decodedToken = await verifyJWT(token);
+    const user = await UserModel.findOne({ _id: decodedToken._id });
+    res.send(user);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 
 module.exports = usersRouter;
