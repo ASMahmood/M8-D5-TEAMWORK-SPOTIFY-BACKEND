@@ -26,13 +26,19 @@ const corsOptions = {
 
 server.use(cors(corsOptions));
 server.use(express.json());
+
 server.use(passport.initialize());
 server.use(cookieParser());
 
-console.log(listEndpoints(server));
+
 
 server.use("/users", usersRouter);
+
 server.use("/deezer", deezerRouter);
+console.log(listEndpoints(server));
+
+
+
 
 server.use(catchAllHandler);
 
