@@ -25,7 +25,10 @@ usersRouter.post("/login", async (req, res, next) => {
     const user = await UserModel.findByCredentials(email, password);
     console.log(user);
     const token = await authenticate(user);
-    res.send(token);
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
+    res.send({ message: "logged in" });
   } catch (error) {
     console.log(error);
     next(error);
@@ -44,7 +47,7 @@ usersRouter.get(
   passport.authenticate("spotify"),
   async (req, res, next) => {
     try {
-      res.cookie("accessToken", req.user.tokens.access, {
+      res.cookie("token", req.user.token, {
         httpOnly: true,
       });
       res.status(200).redirect("https://www.youtube.com/watch?v=2ocykBzWDiM");

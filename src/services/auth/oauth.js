@@ -24,8 +24,8 @@ passport.use(
           };
           const createdUser = new UserModel(newUser);
           await createdUser.save();
-          const tokens = await authenticate(createdUser);
-          done(null, { user: createdUser, tokens });
+          const token = await authenticate(createdUser);
+          done(null, { user: createdUser, token });
         } else {
           const tokens = await authenticate(user);
           done(null, { user, tokens });
